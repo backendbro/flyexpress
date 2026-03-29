@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>First Fly Express - FAQ | Frequently Asked Questions</title>
+    <meta name="description" content="Find answers to common questions about First Fly Express shipping, delivery timelines, prohibited items, address changes, and more.">
+    <!-- Tailwind + Font Awesome + Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f9fafb;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar styles */
+        .navbar-fixed {
+            transition: all 0.2s ease;
+        }
+        .mobile-menu-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: white;
+            border-top: 1px solid #eef2f6;
+        }
+        .mobile-menu-panel.open {
+            max-height: 480px;
+        }
+
+        /* Breadcrumb / Hero */
+        .faq-hero {
+            background: linear-gradient(115deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .faq-hero::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255,51,51,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 6px 18px;
+            display: inline-block;
+        }
+
+        /* FAQ Accordion Styles */
+        .faq-item {
+            background: white;
+            border-radius: 1.25rem;
+            transition: all 0.2s ease;
+            border: 1px solid #eef2ff;
+        }
+        .faq-question {
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .faq-question:hover {
+            background: #fef2f2;
+        }
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.33, 1, 0.68, 1);
+            border-top: 0px solid transparent;
+        }
+        .faq-item.active .faq-answer {
+            max-height: 500px;
+            border-top-width: 1px;
+            border-top-color: #fee2e2;
+        }
+        .faq-item.active .faq-icon i {
+            transform: rotate(180deg);
+        }
+        .faq-icon i {
+            transition: transform 0.3s ease;
+        }
+        
+        /* Delivery table styling */
+        .delivery-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #f8fafc;
+            border-radius: 1rem;
+            overflow: hidden;
+        }
+        .delivery-table th, .delivery-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .delivery-table th {
+            background: #f1f5f9;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .prohibited-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .prohibited-list li {
+            padding: 8px 0 8px 28px;
+            position: relative;
+        }
+        .prohibited-list li:before {
+            content: "✕";
+            color: #dc2626;
+            position: absolute;
+            left: 0;
+            font-weight: bold;
+        }
+
+        /* Modal */
+        .modal-fade {
+            transition: opacity 0.25s ease, visibility 0.25s;
+        }
+        .modal-card {
+            transform: scale(0.96);
+            transition: transform 0.2s ease-out;
+        }
+        .modal:not(.hidden) .modal-card {
+            transform: scale(1);
+        }
+
+        @media (max-width: 768px) {
+            .delivery-table th, .delivery-table td {
+                padding: 8px 12px;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- MODAL: Quick Enquiry Popup (consistent with previous pages) -->
+    <div id="quickEnquiryModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300 hidden modal-fade">
+        <div class="modal-card bg-white w-full max-w-2xl mx-5 rounded-2xl shadow-2xl overflow-hidden">
+            <div class="relative bg-gradient-to-r from-red-50 to-white px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-red-600 text-xl font-extrabold tracking-tight"><i class="fas fa-bolt mr-2"></i> Get Call In A Minute!</h3>
+                <button onclick="closeModalNow()" class="text-gray-500 hover:text-red-600 text-2xl leading-5">&times;</button>
+            </div>
+            <div class="p-6">
+                <form id="faqEnquiryForm" onsubmit="handleFAQForm(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" placeholder="Pickup Location" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl focus:border-red-400 focus:ring-1 focus:ring-red-300 outline-none text-sm">
+                    <input type="text" placeholder="Delivery Location" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl focus:border-red-400 outline-none text-sm">
+                    <input type="tel" placeholder="Contact Number" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm">
+                    <input type="text" placeholder="Weight (Kg)" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm">
+                    <input type="text" placeholder="Content Type" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm">
+                    <textarea rows="2" placeholder="Additional Information" class="col-span-full px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm"></textarea>
+                    <div class="col-span-full flex flex-wrap justify-center gap-4 mt-2">
+                        <button type="submit" name="action" value="email" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2"><i class="fas fa-envelope"></i> Send Email</button>
+                        <button type="submit" name="action" value="whatsapp" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION (matching previous cloned style) -->
+    <nav class="navbar-fixed fixed w-full z-40 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-5 md:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+               <a href="#" class="flex items-center gap-2">
+                    <img src="/images/ffelogo.png" style="height: 42px;" alt="First Fly Express" class="rounded-md">
+                </a>
+                <!-- Desktop menu -->
+                <div class="hidden md:flex items-center gap-7 font-medium text-sm uppercase tracking-wide">
+                    <a href="index.html" class="text-gray-700 hover:text-red-600 transition">Home</a>
+                    <a href="index.html#about" class="text-gray-700 hover:text-red-600 transition">About Us</a>
+                    <a href="services.html" class="text-gray-700 hover:text-red-600 transition">Services</a>
+                    <a href="track.html" class="text-gray-700 hover:text-red-600 transition">Track n Trace</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-red-600 transition">Contact Us</a>
+                    <a href="download.html" class="text-gray-700 hover:text-red-600 transition">download</a>
+                    <a href="faq.html" class="text-red-600 border-b-2 border-red-600 pb-1">FAQ</a>
+                </div>
+                <!-- Hamburger -->
+                <button id="mobileMenuToggler" class="md:hidden border border-gray-300 rounded-lg p-2 hover:bg-gray-50 transition">
+                    <i class="fas fa-bars text-xl text-gray-700"></i>
+                </button>
+            </div>
+            <div id="mobileNavDrawer" class="mobile-menu-panel md:hidden">
+                <div class="flex flex-col gap-1 py-3 border-t border-gray-100">
+                    <a href="index.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">Home</a>
+                    <a href="index.html#about" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">About Us</a>
+                    <a href="services.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">Services</a>
+                    <a href="track.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">Track n Trace</a>
+                    <a href="contact.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">Contact Us</a>
+                    <a href="download.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">download</a>
+                    <a href="faq.html" class="py-3 px-2 bg-red-50 text-red-600 rounded-lg font-medium">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO / BREADCRUMB SECTION -->
+    <section class="faq-hero pt-32 pb-16 md:pt-40 md:pb-24">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="flex flex-col items-start">
+                <div class="hero-badge mb-4">
+                    <i class="fas fa-question-circle text-red-400 mr-2"></i>
+                    <span class="text-white text-sm font-medium">Knowledge Base</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Frequently Asked Questions</h1>
+                <div class="flex items-center gap-2 text-gray-300 text-sm mt-3">
+                    <a href="index.html" class="hover:text-red-400 transition">Home</a>
+                    <i class="fas fa-chevron-right text-[10px]"></i>
+                    <span class="text-red-300 font-medium">FAQ</span>
+                </div>
+                <p class="text-gray-200 max-w-2xl mt-5 text-base">Find quick answers about shipping, delivery timelines, prohibited items, and how we ensure your shipments reach safely.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN FAQ CONTENT -->
+    <div class="max-w-7xl mx-auto px-6 py-16 md:py-20">
+        <!-- Intro row: image + side note -->
+        <div class="grid md:grid-cols-2 gap-10 mb-16 items-center">
+            <div class="rounded-2xl overflow-hidden shadow-lg">
+                <img src="/images/71.jpg" alt="Customer support FAQ" class="w-full h-auto object-cover">
+            </div>
+            <div class="bg-gradient-to-br from-red-50 to-orange-50 p-8 rounded-2xl">
+                <h2 class="text-2xl font-bold text-gray-800 mb-3"><i class="fas fa-headset text-red-500 mr-2"></i> Your Questions Matter</h2>
+                <p class="text-gray-600 leading-relaxed">We are here to answer your queries and provide clarity on our logistics services. If you don't find what you're looking for, feel free to reach out to our support team.</p>
+                <div class="mt-5 flex gap-3 flex-wrap">
+                    <a href="contact.html" class="inline-flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-full text-sm font-semibold transition"><i class="fas fa-envelope"></i> Contact Support</a>
+                    <a href="track.html" class="inline-flex items-center gap-2 border border-red-300 text-red-700 hover:bg-red-50 px-5 py-2 rounded-full text-sm font-semibold transition"><i class="fas fa-search-location"></i> Track Shipment</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACCORDION FAQ SECTION -->
+        <div class="space-y-4">
+            <!-- FAQ 1 - Shipment Safety -->
+            <div class="faq-item p-0 overflow-hidden">
+                <div class="faq-question flex justify-between items-center p-5 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800"><i class="fas fa-shield-alt text-red-500 mr-3"></i> How safe are my shipments with First Fly Express?</h3>
+                    <div class="faq-icon text-red-500"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer px-5 md:px-6 pb-5 md:pb-6">
+                    <p class="text-gray-600 leading-relaxed">While all efforts are made to ensure zero error service, we also have a <strong>‘Comprehensive Risk Coverage Policy’</strong>, which insures your shipment against any unforeseen event such as loss or damage during transit. Your cargo is fully protected.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 2 - Delivery Timeline Table -->
+            <div class="faq-item p-0 overflow-hidden">
+                <div class="faq-question flex justify-between items-center p-5 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800"><i class="fas fa-clock text-red-500 mr-3"></i> How many days will it take to deliver my shipment?</h3>
+                    <div class="faq-icon text-red-500"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer px-5 md:px-6 pb-5 md:pb-6">
+                    <p class="text-gray-600 mb-4">Delivery timelines vary based on destination type. Below is the estimated delivery schedule:</p>
+                    <div class="overflow-x-auto">
+                        <table class="delivery-table">
+                            <thead>
+                                <tr><th>Town Category</th><th>Delivery Time</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>International</td><td>2-3 Working Days</td></tr>
+                                <tr><td>All Major Metros</td><td>Before 10:30 hours (Next day)</td></tr>
+                                <tr><td>All Main Cities & Towns</td><td>Within 24 hours</td></tr>
+                                <tr><td>Small Towns</td><td>24 to 48 hours</td></tr>
+                                <tr><td>Satellite Stations</td><td>48 to 72 hours</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQ 3 - Prohibited Items -->
+            <div class="faq-item p-0 overflow-hidden">
+                <div class="faq-question flex justify-between items-center p-5 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800"><i class="fas fa-ban text-red-500 mr-3"></i> What shipments cannot be carried by you?</h3>
+                    <div class="faq-icon text-red-500"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer px-5 md:px-6 pb-5 md:pb-6">
+                    <p class="text-gray-600 mb-3 font-medium">We do not carry the following items:</p>
+                    <ul class="prohibited-list grid md:grid-cols-2 gap-x-6">
+                        <li>Stamped and prepaid postal envelopes and parcels</li>
+                        <li>Precious stones, gems and jewelry</li>
+                        <li>Uncrossed (bearer) drafts / cheque, currency and coins</li>
+                        <li>Poison</li>
+                        <li>Firearms, explosives and military equipment</li>
+                        <li>Hazardous and radioactive material</li>
+                        <li>Foodstuff and liquor</li>
+                        <li>Any pornographic material</li>
+                        <li>Hazardous chemical items</li>
+                    </ul>
+                    <p class="text-gray-500 text-sm mt-4">All items that infringe the Indian Postal Act of 1898 and all restricted items as per the guidelines of IATA.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 4 - Cash/Jewelry -->
+            <div class="faq-item p-0 overflow-hidden">
+                <div class="faq-question flex justify-between items-center p-5 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800"><i class="fas fa-gem text-red-500 mr-3"></i> Can I book cash, precious stones or jewellery?</h3>
+                    <div class="faq-icon text-red-500"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer px-5 md:px-6 pb-5 md:pb-6">
+                    <p class="text-gray-600 leading-relaxed">Carrying or booking valuables such as these is illegal as they are items banned under the <strong>‘Postal Regulation Act’</strong>. We do not carry the same and hold no responsibility if booked without our knowledge. We strictly advise against including such items.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 5 - Representative Visit -->
+            <div class="faq-item p-0 overflow-hidden">
+                <div class="faq-question flex justify-between items-center p-5 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800"><i class="fas fa-user-tie text-red-500 mr-3"></i> Can your representative visit me for a discussion?</h3>
+                    <div class="faq-icon text-red-500"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer px-5 md:px-6 pb-5 md:pb-6">
+                    <p class="text-gray-600">Please send a mail to <a href="mailto:sales@firstflyexpress.com" class="text-red-600 hover:underline font-medium">sales@firstflyexpress.com</a> (bearing the subject ‘Business Call’). Mention the time and date convenient for you along with your contact details, and our representative will visit you promptly.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 6 - Change Address -->
+            <div class="faq-item p-0 overflow-hidden">
+                <div class="faq-question flex justify-between items-center p-5 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800"><i class="fas fa-map-marker-alt text-red-500 mr-3"></i> Can I change the address of a shipment that is not yet delivered?</h3>
+                    <div class="faq-icon text-red-500"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer px-5 md:px-6 pb-5 md:pb-6">
+                    <p class="text-gray-600">Yes, get in touch with the booking branch. If the shipment has not been delivered, the needful shall be done. Please provide written intimation within 48 hours of booking. Alternatively, email <a href="mailto:sales@firstflyexpress.com" class="text-red-600">sales@firstflyexpress.com</a> with subject ‘Change Address’, including your contact details and the new address.</p>
+                </div>
+            </div>
+
+            <!-- FAQ 7 - Additional: Tracking info -->
+            <div class="faq-item p-0 overflow-hidden">
+                <div class="faq-question flex justify-between items-center p-5 md:p-6">
+                    <h3 class="text-lg md:text-xl font-semibold text-gray-800"><i class="fas fa-truck text-red-500 mr-3"></i> How can I track my shipment in real-time?</h3>
+                    <div class="faq-icon text-red-500"><i class="fas fa-chevron-down"></i></div>
+                </div>
+                <div class="faq-answer px-5 md:px-6 pb-5 md:pb-6">
+                    <p class="text-gray-600">You can track your consignment using our <strong>Track n Trace</strong> tool. Simply visit the <a href="track.html" class="text-red-600 font-medium">Track n Trace page</a> and enter your Airway Bill Number or reference ID to get real-time status updates.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Helpful note / extra CTA -->
+        <div class="mt-14 bg-gray-100 rounded-2xl p-6 md:p-8 text-center">
+            <i class="fas fa-life-ring text-red-500 text-3xl mb-3 inline-block"></i>
+            <h3 class="text-xl font-bold text-gray-800">Still have questions?</h3>
+            <p class="text-gray-600 mt-2 max-w-2xl mx-auto">We're happy to help! Reach out to our customer support team for any additional queries.</p>
+            <div class="flex justify-center gap-4 mt-5 flex-wrap">
+                <a href="contact.html" class="bg-red-600 hover:bg-red-700 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition shadow"><i class="fas fa-phone-alt mr-2"></i> Contact Us</a>
+                <a href="#" onclick="openModalNow()" class="border border-red-400 text-red-600 hover:bg-red-50 px-6 py-2.5 rounded-full text-sm font-semibold transition"><i class="fas fa-envelope-open-text mr-2"></i> Quick Enquiry</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- FOOTER (consistent with brand) -->
+    <footer class="bg-gray-900 text-white pt-14 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-10 text-center md:text-left mb-10">
+                <div>
+                    <h3 class="text-2xl font-bold italic"><span class="text-red-500">First</span> Fly Express</h3>
+                    <p class="text-gray-400 text-sm mt-3 leading-relaxed">Leading logistics and courier solution partners committed to delivering value and building long term customer relationships.</p>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4 border-b border-gray-700 inline-block pb-2">Quick Links</h4>
+                    <ul class="space-y-2 text-gray-400 text-sm">
+                        <li><a href="index.html" class="hover:text-red-400">Home</a></li>
+                        <li><a href="index.html#about" class="hover:text-red-400">About Us</a></li>
+                        <li><a href="services.html" class="hover:text-red-400">Services</a></li>
+                        <li><a href="contact.html" class="hover:text-red-400">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-4 border-b border-gray-700 inline-block pb-2">Connect</h4>
+                    <div class="flex justify-center md:justify-start gap-4">
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-sky-500"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-red-600"><i class="fab fa-google-plus-g"></i></a>
+                        <a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-700"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500">
+                <p>© 2025 First Fly Express. All Rights Reserved.</p>
+                <a href="#" class="mt-3 md:mt-0 bg-gray-800 hover:bg-red-600 text-white px-4 py-2 rounded-full transition text-xs"><i class="fas fa-arrow-up mr-1"></i> Back to Top</a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Accordion functionality
+        const faqItems = document.querySelectorAll('.faq-item');
+        faqItems.forEach(item => {
+            const questionDiv = item.querySelector('.faq-question');
+            questionDiv.addEventListener('click', () => {
+                // Toggle active class on clicked item
+                const isActive = item.classList.contains('active');
+                // Optional: close others (clean UI)
+                faqItems.forEach(otherItem => {
+                    if(otherItem !== item && otherItem.classList.contains('active')) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                if(!isActive) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        });
+
+        // Mobile menu toggle
+        const toggler = document.getElementById('mobileMenuToggler');
+        const drawer = document.getElementById('mobileNavDrawer');
+        if(toggler) {
+            toggler.addEventListener('click', () => {
+                drawer.classList.toggle('open');
+                const iconSpan = toggler.querySelector('i');
+                if(drawer.classList.contains('open')) {
+                    iconSpan.classList.remove('fa-bars');
+                    iconSpan.classList.add('fa-times');
+                } else {
+                    iconSpan.classList.remove('fa-times');
+                    iconSpan.classList.add('fa-bars');
+                }
+            });
+        }
+        document.querySelectorAll('#mobileNavDrawer a').forEach(link => {
+            link.addEventListener('click', () => {
+                drawer.classList.remove('open');
+                if(toggler) {
+                    const iconSpan = toggler.querySelector('i');
+                    iconSpan.classList.remove('fa-times');
+                    iconSpan.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Modal controls
+        const modal = document.getElementById('quickEnquiryModal');
+        function openModalNow() { if(modal) modal.classList.remove('hidden'); }
+        function closeModalNow() { if(modal) modal.classList.add('hidden'); }
+        setTimeout(() => { openModalNow(); }, 1200);
+        if(modal) {
+            modal.addEventListener('click', (e) => { if(e.target === modal) closeModalNow(); });
+        }
+
+        function handleFAQForm(e) {
+            e.preventDefault();
+            const btn = e.submitter;
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+            setTimeout(() => {
+                alert('✅ Enquiry sent! Our representative will contact you shortly.');
+                closeModalNow();
+                e.target.reset();
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }, 1300);
+        }
+
+        // Sticky nav shadow
+        window.addEventListener('scroll', () => {
+            const navBar = document.querySelector('.navbar-fixed');
+            if(window.scrollY > 20) navBar.classList.add('shadow-md');
+            else navBar.classList.remove('shadow-md');
+        });
+    </script>
+</body>
+</html>

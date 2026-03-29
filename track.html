@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>First Fly Express - Track & Trace | Shipment Tracking</title>
+    <meta name="description" content="Track your First Fly Express shipment in real-time. Enter your Airway Bill Number to get instant status updates and view proof of delivery (POD).">
+    <!-- Tailwind + Font Awesome + Google Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+     <link rel="icon" type="image/png" sizes="16x16" href="images/favicon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+    <link rel="icon" type="image/png" sizes="48x48" href="images/favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            overflow-x: hidden;
+        }
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navbar Styles */
+        .navbar-fixed {
+            transition: all 0.2s ease;
+        }
+        .mobile-menu-panel {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+            background: white;
+            border-top: 1px solid #eef2f6;
+        }
+        .mobile-menu-panel.open {
+            max-height: 480px;
+        }
+
+        /* Hero/Breadcrumb */
+        .track-hero {
+            background: linear-gradient(115deg, #0f172a 0%, #1e293b 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .track-hero::after {
+            content: '';
+            position: absolute;
+            top: -20%;
+            right: -5%;
+            width: 350px;
+            height: 350px;
+            background: radial-gradient(circle, rgba(255,51,51,0.12) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        .hero-badge {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(4px);
+            border-radius: 60px;
+            padding: 6px 18px;
+            display: inline-block;
+        }
+
+        /* Tracking Cards */
+        .track-card {
+            background: white;
+            border-radius: 1.75rem;
+            transition: all 0.3s ease;
+            border: 1px solid #eef2ff;
+        }
+        .track-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 30px -12px rgba(0, 0, 0, 0.08);
+        }
+        .input-group-custom {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .track-input {
+            flex: 1;
+            padding: 14px 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 1rem;
+            font-size: 1rem;
+            transition: all 0.2s;
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+        .track-input:focus {
+            outline: none;
+            border-color: #ff3333;
+            box-shadow: 0 0 0 3px rgba(255, 51, 51, 0.1);
+        }
+        .btn-track {
+            background: #ff3333;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 1rem;
+            font-weight: 700;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-track:hover {
+            background: #cc2b2b;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(255, 51, 51, 0.3);
+        }
+        .btn-outline-track {
+            background: transparent;
+            border: 2px solid #ff3333;
+            color: #ff3333;
+            padding: 12px 28px;
+            border-radius: 1rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .btn-outline-track:hover {
+            background: #ff3333;
+            color: white;
+            transform: translateY(-2px);
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        .status-delivered { background: #dcfce7; color: #15803d; }
+        .status-transit { background: #fef9c3; color: #854d0e; }
+        .status-pending { background: #ffe4e4; color: #b91c1c; }
+        
+        /* Timeline */
+        .timeline-item {
+            display: flex;
+            gap: 16px;
+            padding: 16px 0;
+            border-left: 2px solid #e2e8f0;
+            margin-left: 24px;
+            position: relative;
+        }
+        .timeline-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ff3333;
+            position: absolute;
+            left: -7px;
+            top: 22px;
+        }
+
+        /* Modal */
+        .modal-fade { transition: opacity 0.25s ease, visibility 0.25s; }
+        .modal-card { transform: scale(0.96); transition: transform 0.2s ease-out; }
+        .modal:not(.hidden) .modal-card { transform: scale(1); }
+
+        @media (max-width: 640px) {
+            .input-group-custom { flex-direction: column; }
+            .btn-track { justify-content: center; }
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- MODAL: Quick Enquiry Popup (consistent across all pages) -->
+    <div id="quickEnquiryModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm transition-all duration-300 hidden modal-fade">
+        <div class="modal-card bg-white w-full max-w-2xl mx-5 rounded-2xl shadow-2xl overflow-hidden">
+            <div class="relative bg-gradient-to-r from-red-50 to-white px-6 py-4 border-b flex justify-between items-center">
+                <h3 class="text-red-600 text-xl font-extrabold tracking-tight"><i class="fas fa-bolt mr-2"></i> Get Call In A Minute!</h3>
+                <button onclick="closeModalNow()" class="text-gray-500 hover:text-red-600 text-2xl leading-5">&times;</button>
+            </div>
+            <div class="p-6">
+                <form id="trackEnquiryForm" onsubmit="handleTrackEnquiry(event)" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <input type="text" placeholder="Pickup Location" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl focus:border-red-400 outline-none text-sm">
+                    <input type="text" placeholder="Delivery Location" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl focus:border-red-400 outline-none text-sm">
+                    <input type="tel" placeholder="Contact Number" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm">
+                    <input type="text" placeholder="Weight (Kg)" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm">
+                    <input type="text" placeholder="Content Type" required class="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm">
+                    <textarea rows="2" placeholder="Additional Information" class="col-span-full px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm"></textarea>
+                    <div class="col-span-full flex flex-wrap justify-center gap-4 mt-2">
+                        <button type="submit" name="action" value="email" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2"><i class="fas fa-envelope"></i> Send Email</button>
+                        <button type="submit" name="action" value="whatsapp" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2"><i class="fab fa-whatsapp"></i> Send WhatsApp</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- NAVIGATION (consistent) -->
+    <nav class="navbar-fixed fixed w-full z-40 bg-white/95 backdrop-blur-sm shadow-sm border-b border-gray-100">
+        <div class="max-w-7xl mx-auto px-5 md:px-8">
+            <div class="flex justify-between items-center h-16 md:h-20">
+               <a href="#" class="flex items-center gap-2">
+                    <img src="/images/ffelogo.png" style="height: 42px;" alt="First Fly Express" class="rounded-md">
+                </a>
+                <div class="hidden md:flex items-center gap-7 font-medium text-sm uppercase tracking-wide">
+                    <a href="index.html" class="text-gray-700 hover:text-red-600 transition">Home</a>
+                    <a href="index.html#about" class="text-gray-700 hover:text-red-600 transition">About Us</a>
+                    <a href="services.html" class="text-gray-700 hover:text-red-600 transition">Services</a>
+                    <a href="track.html" class="text-red-600 border-b-2 border-red-600 pb-1">Track n Trace</a>
+                    <a href="contact.html" class="text-gray-700 hover:text-red-600 transition">Contact Us</a>
+                    <a href="download.html" class="text-gray-700 hover:text-red-600 transition">download</a>
+                    <a href="faq.html" class="text-gray-700 hover:text-red-600 transition">FAQ</a>
+                </div>
+                <button id="mobileMenuToggler" class="md:hidden border border-gray-300 rounded-lg p-2 hover:bg-gray-50 transition">
+                    <i class="fas fa-bars text-xl text-gray-700"></i>
+                </button>
+            </div>
+            <div id="mobileNavDrawer" class="mobile-menu-panel md:hidden">
+                <div class="flex flex-col gap-1 py-3 border-t border-gray-100">
+                    <a href="index.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">Home</a>
+                    <a href="index.html#about" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">About Us</a>
+                    <a href="services.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">Services</a>
+                    <a href="track.html" class="py-3 px-2 bg-red-50 text-red-600 rounded-lg font-medium">Track n Trace</a>
+                    <a href="contact.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">Contact Us</a>
+                    <a href="download.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">download</a>
+                    <a href="faq.html" class="py-3 px-2 hover:bg-red-50 hover:text-red-600 rounded-lg font-medium">FAQ</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- HERO SECTION -->
+    <section class="track-hero pt-32 pb-16 md:pt-40 md:pb-24">
+        <div class="max-w-7xl mx-auto px-6 relative z-10">
+            <div class="flex flex-col items-start">
+                <div class="hero-badge mb-4">
+                    <i class="fas fa-search-location text-red-400 mr-2"></i>
+                    <span class="text-white text-sm font-medium">Real-Time Tracking</span>
+                </div>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white tracking-tight">Track & Trace</h1>
+                <div class="flex items-center gap-2 text-gray-300 text-sm mt-3">
+                    <a href="index.html" class="hover:text-red-400 transition">Home</a>
+                    <i class="fas fa-chevron-right text-[10px]"></i>
+                    <span class="text-red-300 font-medium">Track & Trace</span>
+                </div>
+                <p class="text-gray-200 max-w-2xl mt-5 text-base">Monitor your shipment in real-time. Enter your Airway Bill Number to get instant status updates and delivery proof.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- MAIN TRACKING SECTION -->
+    <div class="max-w-7xl mx-auto px-6 py-16 md:py-20">
+        <!-- Two Tracking Cards: Track Shipment + POD -->
+        <div class="grid md:grid-cols-2 gap-8 mb-16">
+            <!-- Card 1: Track Shipment -->
+            <div class="track-card p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center"><i class="fas fa-box-open text-red-500 text-xl"></i></div>
+                    <div><h2 class="text-2xl font-bold text-gray-800">Track Shipment</h2><p class="text-gray-500 text-sm">Get real-time status updates</p></div>
+                </div>
+                <form id="trackShipmentForm" onsubmit="handleTrackSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Airway Bill Number / AWB No.</label>
+                        <textarea name="awbno" rows="2" class="track-input w-full" placeholder="Enter AWB number (e.g., FFE-123456789)"></textarea>
+                        <p class="text-xs text-gray-400 mt-1">Enter single or multiple AWB numbers (one per line)</p>
+                    </div>
+                    <button type="submit" class="btn-track w-full justify-center"><i class="fas fa-search"></i> Track Now</button>
+                </form>
+                
+                <!-- Dynamic Tracking Result (Demo) -->
+                <div id="trackResult" class="mt-6 hidden">
+                    <div class="border-t border-gray-100 pt-5">
+                        <div class="flex justify-between items-center mb-4 flex-wrap gap-2">
+                            <span class="font-bold text-gray-700"><i class="fas fa-barcode mr-2"></i> AWB: <span id="displayAwb">FFE-123456789</span></span>
+                            <span id="statusBadge" class="status-badge status-transit">In Transit</span>
+                        </div>
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <div class="timeline-container">
+                                <div class="timeline-item relative">
+                                    <div class="timeline-dot"></div>
+                                    <div><p class="font-semibold text-gray-800">Delivered</p><p class="text-sm text-gray-500">Expected: Mar 28, 2025</p></div>
+                                </div>
+                                <div class="timeline-item relative">
+                                    <div class="timeline-dot"></div>
+                                    <div><p class="font-semibold text-gray-800">Out for Delivery</p><p class="text-sm text-gray-500">Mar 27, 2025 - 09:32 AM</p></div>
+                                </div>
+                                <div class="timeline-item relative">
+                                    <div class="timeline-dot"></div>
+                                    <div><p class="font-semibold text-gray-800">Arrived at Destination Hub</p><p class="text-sm text-gray-500">Delhi Sort Center - Mar 26, 2025</p></div>
+                                </div>
+                                <div class="timeline-item relative">
+                                    <div class="timeline-dot"></div>
+                                    <div><p class="font-semibold text-gray-800">Shipment Booked</p><p class="text-sm text-gray-500">Mar 24, 2025 - 14:15 PM</p></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-3"><i class="fas fa-info-circle"></i> Demo tracking data — actual results from our server will appear after integration.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: View POD -->
+            <div class="track-card p-6 md:p-8">
+                <div class="flex items-center gap-3 mb-5">
+                    <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center"><i class="fas fa-file-signature text-green-600 text-xl"></i></div>
+                    <div><h2 class="text-2xl font-bold text-gray-800">View POD</h2><p class="text-gray-500 text-sm">Proof of Delivery</p></div>
+                </div>
+                <form id="podForm" onsubmit="handlePODSubmit(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-semibold text-gray-700 mb-2">Airway Bill Number</label>
+                        <input type="text" name="awbno" class="track-input w-full" placeholder="Enter AWB number for POD">
+                    </div>
+                    <button type="submit" class="btn-outline-track w-full justify-center flex items-center gap-2"><i class="fas fa-file-pdf"></i> View POD</button>
+                </form>
+                <div id="podResult" class="mt-5 hidden">
+                    <div class="bg-green-50 rounded-xl p-4 text-center border border-green-200">
+                        <i class="fas fa-check-circle text-green-600 text-3xl mb-2"></i>
+                        <p class="text-gray-700 font-medium">POD Available</p>
+                        <p class="text-sm text-gray-500 mt-1">Delivery completed on <strong>Mar 27, 2025</strong>. Signature captured.</p>
+                        <button class="mt-3 text-red-600 text-sm font-semibold underline">Download PDF <i class="fas fa-download"></i></button>
+                    </div>
+                    <p class="text-xs text-gray-400 mt-2 text-center">* Demo preview — actual POD will be fetched after backend integration.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Help & Support Info -->
+        <div class="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-5">
+            <div class="flex items-center gap-4">
+                <i class="fas fa-headset text-red-500 text-4xl"></i>
+                <div><h3 class="font-bold text-gray-800">Need help with tracking?</h3><p class="text-gray-600 text-sm">Contact our support team for assistance</p></div>
+            </div>
+            <div class="flex gap-3 flex-wrap">
+                <a href="tel:+919643326207" class="bg-red-600 text-white px-5 py-2.5 rounded-full font-semibold hover:bg-red-700 transition shadow"><i class="fas fa-phone-alt mr-2"></i> Call Support</a>
+                <a href="contact.html" class="border border-red-400 text-red-600 px-5 py-2.5 rounded-full font-semibold hover:bg-red-50 transition"><i class="fas fa-envelope mr-2"></i> Email Us</a>
+                <a href="#" onclick="openModalNow(); return false;" class="bg-gray-800 text-white px-5 py-2.5 rounded-full font-semibold hover:bg-gray-900 transition"><i class="fas fa-comment-dots mr-2"></i> Quick Enquiry</a>
+            </div>
+        </div>
+
+        <!-- Tracking Tips -->
+        <div class="mt-12 grid md:grid-cols-3 gap-5 text-center">
+            <div class="p-4"><i class="fas fa-qrcode text-red-400 text-3xl mb-2"></i><p class="font-semibold">AWB Format</p><p class="text-sm text-gray-500">FFE-XXXXXXXXX or numeric ID</p></div>
+            <div class="p-4"><i class="fas fa-clock text-red-400 text-3xl mb-2"></i><p class="font-semibold">Updates within 2-4 hrs</p><p class="text-sm text-gray-500">Real-time scanning events</p></div>
+            <div class="p-4"><i class="fas fa-mobile-alt text-red-400 text-3xl mb-2"></i><p class="font-semibold">Track on Mobile</p><p class="text-sm text-gray-500">Responsive & fast interface</p></div>
+        </div>
+    </div>
+
+    <!-- FOOTER (consistent) -->
+    <footer class="bg-gray-900 text-white pt-14 pb-8">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="grid md:grid-cols-3 gap-10 text-center md:text-left mb-10">
+                <div><h3 class="text-2xl font-bold italic"><span class="text-red-500">First</span> Fly Express</h3><p class="text-gray-400 text-sm mt-3 leading-relaxed">Leading logistics and courier solution partners committed to delivering value and building long term customer relationships.</p></div>
+                <div><h4 class="text-lg font-bold mb-4 border-b border-gray-700 inline-block pb-2">Quick Links</h4><ul class="space-y-2 text-gray-400 text-sm"><li><a href="index.html" class="hover:text-red-400">Home</a></li><li><a href="index.html#about" class="hover:text-red-400">About Us</a></li><li><a href="services.html" class="hover:text-red-400">Services</a></li><li><a href="contact.html" class="hover:text-red-400">Contact</a></li></ul></div>
+                <div><h4 class="text-lg font-bold mb-4 border-b border-gray-700 inline-block pb-2">Connect</h4><div class="flex justify-center md:justify-start gap-4"><a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-600"><i class="fab fa-facebook-f"></i></a><a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-sky-500"><i class="fab fa-twitter"></i></a><a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-red-600"><i class="fab fa-google-plus-g"></i></a><a href="#" class="w-9 h-9 rounded-full bg-gray-800 flex items-center justify-center hover:bg-blue-700"><i class="fab fa-linkedin-in"></i></a></div></div>
+            </div>
+            <div class="border-t border-gray-800 pt-6 flex flex-col md:flex-row justify-between items-center text-sm text-gray-500"><p>© 2025 First Fly Express. All Rights Reserved.</p><a href="#" class="mt-3 md:mt-0 bg-gray-800 hover:bg-red-600 text-white px-4 py-2 rounded-full transition text-xs"><i class="fas fa-arrow-up mr-1"></i> Back to Top</a></div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        const toggler = document.getElementById('mobileMenuToggler');
+        const drawer = document.getElementById('mobileNavDrawer');
+        if(toggler) {
+            toggler.addEventListener('click', () => {
+                drawer.classList.toggle('open');
+                const iconSpan = toggler.querySelector('i');
+                if(drawer.classList.contains('open')) {
+                    iconSpan.classList.remove('fa-bars');
+                    iconSpan.classList.add('fa-times');
+                } else {
+                    iconSpan.classList.remove('fa-times');
+                    iconSpan.classList.add('fa-bars');
+                }
+            });
+        }
+        document.querySelectorAll('#mobileNavDrawer a').forEach(link => {
+            link.addEventListener('click', () => {
+                drawer.classList.remove('open');
+                if(toggler) {
+                    const iconSpan = toggler.querySelector('i');
+                    iconSpan.classList.remove('fa-times');
+                    iconSpan.classList.add('fa-bars');
+                }
+            });
+        });
+
+        // Modal logic
+        const modal = document.getElementById('quickEnquiryModal');
+        function openModalNow() { if(modal) modal.classList.remove('hidden'); }
+        function closeModalNow() { if(modal) modal.classList.add('hidden'); }
+        setTimeout(() => { openModalNow(); }, 1400);
+        if(modal) modal.addEventListener('click', (e) => { if(e.target === modal) closeModalNow(); });
+
+        function handleTrackEnquiry(e) {
+            e.preventDefault();
+            const btn = e.submitter;
+            const original = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            btn.disabled = true;
+            setTimeout(() => {
+                alert('✅ Enquiry sent! We will contact you shortly.');
+                closeModalNow();
+                e.target.reset();
+                btn.innerHTML = original;
+                btn.disabled = false;
+            }, 1200);
+        }
+
+        // Track Shipment handler (demo simulation)
+        function handleTrackSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const awbValue = form.querySelector('textarea[name="awbno"]').value.trim();
+            if(!awbValue) {
+                alert('Please enter an Airway Bill Number');
+                return;
+            }
+            const resultDiv = document.getElementById('trackResult');
+            const displayAwbSpan = document.getElementById('displayAwb');
+            displayAwbSpan.innerText = awbValue.split('\n')[0].substring(0, 30);
+            resultDiv.classList.remove('hidden');
+            // Simulate status badge based on demo
+            const statusSpan = document.getElementById('statusBadge');
+            const random = Math.random();
+            if(random > 0.6) {
+                statusSpan.className = 'status-badge status-delivered';
+                statusSpan.innerText = 'Delivered';
+            } else if(random > 0.3) {
+                statusSpan.className = 'status-badge status-transit';
+                statusSpan.innerText = 'In Transit';
+            } else {
+                statusSpan.className = 'status-badge status-pending';
+                statusSpan.innerText = 'Booking Confirmed';
+            }
+            // Scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // POD handler
+        function handlePODSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const awbPod = form.querySelector('input[name="awbno"]').value.trim();
+            if(!awbPod) {
+                alert('Please enter AWB number to fetch Proof of Delivery');
+                return;
+            }
+            const podResultDiv = document.getElementById('podResult');
+            podResultDiv.classList.remove('hidden');
+            podResultDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Sticky nav shadow
+        window.addEventListener('scroll', () => {
+            const navBar = document.querySelector('.navbar-fixed');
+            if(window.scrollY > 20) navBar.classList.add('shadow-md');
+            else navBar.classList.remove('shadow-md');
+        });
+    </script>
+</body>
+</html>
