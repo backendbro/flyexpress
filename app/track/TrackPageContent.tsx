@@ -2,22 +2,35 @@
 
 import Link from "next/link";
 import { useState, useEffect } from "react";
-import { PageEnquiryModal } from "@/components/QuickEnquiryModal";
+import dynamic from 'next/dynamic';
 import { OpenEnquiryButton } from "@/components/OpenEnquiryButton";
-import { RealTimeTracker } from "@/components/RealTimeTracker";
-import { RealTimeMapTracker } from "@/components/RealTimeMapTracker";
 import toast from 'react-hot-toast';
 
+// Dynamically import components that might use browser APIs
+const PageEnquiryModal = dynamic(
+  () => import("@/components/QuickEnquiryModal").then(mod => mod.PageEnquiryModal),
+  { ssr: false }
+);
+
+const RealTimeTracker = dynamic(
+  () => import("@/components/RealTimeTracker").then(mod => mod.RealTimeTracker),
+  { ssr: false }
+);
+
+const RealTimeMapTracker = dynamic(
+  () => import("@/components/RealTimeMapTracker").then(mod => mod.RealTimeMapTracker),
+  { ssr: false }
+);
 
 export function TrackPageContent() {
   const [trackOpen, setTrackOpen] = useState(false);
   const [awbDisplay, setAwbDisplay] = useState("");
   const [podOpen, setPodOpen] = useState(false);
   const [currentAWB, setCurrentAWB] = useState("");
-  const [isClient, setIsClient] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setIsClient(true);
+    setMounted(true);
   }, []);
 
   async function onTrackSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -25,10 +38,7 @@ export function TrackPageContent() {
     const fd = new FormData(e.currentTarget);
     const raw = String(fd.get("awbno") ?? "").trim();
     if (!raw) {
-      if (isClient) {
-        toast.error("Please enter an Airway Bill Number");
-  return;
-      }
+      toast.error("Please enter an Airway Bill Number");
       return;
     }
     const first = raw.split("\n")[0].substring(0, 30);
@@ -42,20 +52,29 @@ export function TrackPageContent() {
     const fd = new FormData(e.currentTarget);
     const raw = String(fd.get("awbPod") ?? "").trim();
     if (!raw) {
-      if (isClient) {
-        toast.error("Please enter AWB number to fetch Proof of Delivery");
-  return;
-      }
+      toast.error("Please enter AWB number to fetch Proof of Delivery");
       return;
     }
     setPodOpen(true);
   }
 
+  // Don't render components that need browser APIs until mounted
+  if (!mounted) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       <PageEnquiryModal autoOpenMs={1400} />
+      {/* Rest of your JSX remains the same */}
       <style jsx>{`
-        /* Your existing styles remain the same */
         .track-hero {
           background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
           position: relative;
@@ -152,57 +171,6 @@ export function TrackPageContent() {
           transform: translateY(-2px);
         }
         
-        .status-badge {
-          display: inline-flex;
-          align-items: center;
-          padding: 0.25rem 0.75rem;
-          border-radius: 9999px;
-          font-size: 0.75rem;
-          font-weight: 600;
-        }
-        
-        .status-delivered {
-          background: #d1fae5;
-          color: #065f46;
-        }
-        
-        .status-transit {
-          background: #dbeafe;
-          color: #1e40af;
-        }
-        
-        .status-pending {
-          background: #fed7aa;
-          color: #92400e;
-        }
-        
-        .timeline-item {
-          display: flex;
-          gap: 1rem;
-          padding: 1rem 0;
-          position: relative;
-        }
-        
-        .timeline-item:not(:last-child)::before {
-          content: '';
-          position: absolute;
-          left: 0.5rem;
-          top: 2rem;
-          bottom: -1rem;
-          width: 2px;
-          background: #e5e7eb;
-        }
-        
-        .timeline-dot {
-          width: 1rem;
-          height: 1rem;
-          border-radius: 9999px;
-          background: #ef4444;
-          margin-top: 0.25rem;
-          position: relative;
-          z-index: 1;
-        }
-        
         @keyframes pulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
@@ -223,7 +191,7 @@ export function TrackPageContent() {
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="flex flex-col items-start">
             <div className="hero-badge mb-4">
-              <i className="fas fa-search-location text-red-400 mr-2" />
+              <i className="fas fa-search-location text-red-400 mr-2"></i>
               <span className="text-white text-sm font-medium">
                 Real-Time Tracking
               </span>
@@ -235,7 +203,7 @@ export function TrackPageContent() {
               <Link href="/" className="hover:text-red-400 transition">
                 Home
               </Link>
-              <i className="fas fa-chevron-right text-[10px]" />
+              <i className="fas fa-chevron-right text-[10px]"></i>
               <span className="text-red-300 font-medium">Track & Trace</span>
             </div>
             <p className="text-gray-200 max-w-2xl mt-5 text-base">
@@ -251,7 +219,7 @@ export function TrackPageContent() {
           <div className="track-card p-6 md:p-8">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
-                <i className="fas fa-box-open text-red-500 text-xl" />
+                <i className="fas fa-box-open text-red-500 text-xl"></i>
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">
@@ -278,15 +246,14 @@ export function TrackPageContent() {
                 </p>
               </div>
               <button type="submit" className="btn-track">
-                <i className="fas fa-search" /> Track Now
+                <i className="fas fa-search"></i> Track Now
               </button>
             </form>
 
             {trackOpen && currentAWB && (
               <div className="mt-6 border-t border-gray-100 pt-5">
                 <RealTimeTracker awb={currentAWB} />
-                  <RealTimeMapTracker awb={currentAWB} />
-
+                <RealTimeMapTracker awb={currentAWB} />
               </div>
             )}
           </div>
@@ -294,7 +261,7 @@ export function TrackPageContent() {
           <div className="track-card p-6 md:p-8">
             <div className="flex items-center gap-3 mb-5">
               <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                <i className="fas fa-file-signature text-green-600 text-xl" />
+                <i className="fas fa-file-signature text-green-600 text-xl"></i>
               </div>
               <div>
                 <h2 className="text-2xl font-bold text-gray-800">View POD</h2>
@@ -317,13 +284,13 @@ export function TrackPageContent() {
                 type="submit"
                 className="btn-outline-track"
               >
-                <i className="fas fa-file-pdf" /> View POD
+                <i className="fas fa-file-pdf"></i> View POD
               </button>
             </form>
             {podOpen ? (
               <div className="mt-5">
                 <div className="bg-green-50 rounded-xl p-4 text-center border border-green-200">
-                  <i className="fas fa-check-circle text-green-600 text-3xl mb-2" />
+                  <i className="fas fa-check-circle text-green-600 text-3xl mb-2"></i>
                   <p className="text-gray-700 font-medium">POD Available</p>
                   <p className="text-sm text-gray-500 mt-1">
                     Delivery completed. Signature captured.
@@ -332,7 +299,7 @@ export function TrackPageContent() {
                     type="button"
                     className="mt-3 text-red-600 text-sm font-semibold underline hover:text-red-700 transition"
                   >
-                    Download PDF <i className="fas fa-download" />
+                    Download PDF <i className="fas fa-download"></i>
                   </button>
                 </div>
                 <p className="text-xs text-gray-400 mt-2 text-center">
@@ -345,7 +312,7 @@ export function TrackPageContent() {
 
         <div className="bg-gradient-to-r from-blue-50 to-indigo-50 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row justify-between items-center gap-5">
           <div className="flex items-center gap-4">
-            <i className="fas fa-headset text-red-500 text-4xl" />
+            <i className="fas fa-headset text-red-500 text-4xl"></i>
             <div>
               <h3 className="font-bold text-gray-800">
                 Need help with tracking?
@@ -360,33 +327,33 @@ export function TrackPageContent() {
               href="tel:+919643326207"
               className="bg-red-600 text-white px-5 py-2.5 rounded-full font-semibold hover:bg-red-700 transition shadow"
             >
-              <i className="fas fa-phone-alt mr-2" /> Call Support
+              <i className="fas fa-phone-alt mr-2"></i> Call Support
             </a>
             <Link
               href="/contact"
               className="border border-red-400 text-red-600 px-5 py-2.5 rounded-full font-semibold hover:bg-red-50 transition"
             >
-              <i className="fas fa-envelope mr-2" /> Email Us
+              <i className="fas fa-envelope mr-2"></i> Email Us
             </Link>
             <OpenEnquiryButton className="bg-gray-800 text-white px-5 py-2.5 rounded-full font-semibold hover:bg-gray-900 transition">
-              <i className="fas fa-comment-dots mr-2" /> Quick Enquiry
+              <i className="fas fa-comment-dots mr-2"></i> Quick Enquiry
             </OpenEnquiryButton>
           </div>
         </div>
 
         <div className="mt-12 grid md:grid-cols-3 gap-5 text-center">
           <div className="p-4">
-            <i className="fas fa-qrcode text-red-400 text-3xl mb-2" />
+            <i className="fas fa-qrcode text-red-400 text-3xl mb-2"></i>
             <p className="font-semibold">AWB Format</p>
             <p className="text-sm text-gray-500">FFE-XXXXXXXXX or numeric ID</p>
           </div>
           <div className="p-4">
-            <i className="fas fa-clock text-red-400 text-3xl mb-2" />
+            <i className="fas fa-clock text-red-400 text-3xl mb-2"></i>
             <p className="font-semibold">Live Updates</p>
             <p className="text-sm text-gray-500">Real-time tracking events</p>
           </div>
           <div className="p-4">
-            <i className="fas fa-mobile-alt text-red-400 text-3xl mb-2" />
+            <i className="fas fa-mobile-alt text-red-400 text-3xl mb-2"></i>
             <p className="font-semibold">Track on Mobile</p>
             <p className="text-sm text-gray-500">Responsive & fast interface</p>
           </div>
