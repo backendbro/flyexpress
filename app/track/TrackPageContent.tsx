@@ -5,6 +5,8 @@ import { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
 import { OpenEnquiryButton } from "@/components/OpenEnquiryButton";
 import toast from 'react-hot-toast';
+import { generatePOD } from "@/lib/generatePOD";
+
 
 // Dynamically import components that might use browser APIs
 const PageEnquiryModal = dynamic(
@@ -47,16 +49,46 @@ export function TrackPageContent() {
     setTrackOpen(true);
   }
 
-  function onPodSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const fd = new FormData(e.currentTarget);
-    const raw = String(fd.get("awbPod") ?? "").trim();
-    if (!raw) {
-      toast.error("Please enter AWB number to fetch Proof of Delivery");
+ async function onPodSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+
+  const fd = new FormData(e.currentTarget);
+  const awb = String(fd.get("awbPod") ?? "").trim();
+
+  if (!awb) {
+    toast.error("Please enter AWB number");
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/pod?awb=${awb}`);
+
+    if (!res.ok) {
+      toast.error("Server error");
       return;
     }
+
+    const shipment = await res.json();
+
+    if (!shipment) {
+      toast.error("Shipment not found");
+      return;
+    }
+
+    if (shipment.status !== "Delivered") {
+      toast.error("This package has not been delivered yet. POD unavailable.");
+      setPodOpen(false);
+      return;
+    }
+
+    generatePOD(shipment);
     setPodOpen(true);
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to generate POD");
   }
+}
 
   // Don't render components that need browser APIs until mounted
   if (!mounted) {
@@ -287,7 +319,7 @@ export function TrackPageContent() {
                 <i className="fas fa-file-pdf"></i> View POD
               </button>
             </form>
-            {podOpen ? (
+            {podOpen && (
               <div className="mt-5">
                 <div className="bg-green-50 rounded-xl p-4 text-center border border-green-200">
                   <i className="fas fa-check-circle text-green-600 text-3xl mb-2"></i>
@@ -306,7 +338,7 @@ export function TrackPageContent() {
                   * POD will be available once shipment is delivered
                 </p>
               </div>
-            ) : null}
+            ) }
           </div>
         </div>
 
