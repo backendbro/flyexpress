@@ -6,9 +6,9 @@ import { OpenEnquiryButton } from "@/components/OpenEnquiryButton";
 import { ContactForm } from "./ContactForm";
 
 export const metadata: Metadata = {
-  title: "Contact Us",
+  title: "Contact Us | First Fly Express – Houston",
   description:
-    "Get in touch with First Fly Express: Delhi head office, branches, phone, email, and enquiry form.",
+    "Get in touch with First Fly Express in Houston, Texas. Call, email, or visit our office for reliable logistics and freight services.",
 };
 
 export default function ContactPage() {
@@ -36,7 +36,7 @@ export default function ContactPage() {
             </div>
             <p className="text-gray-200 max-w-2xl mt-5 text-base">
               Reach out for logistics support, business partnerships, or any
-              queries. We&apos;re available 24/7 to assist you.
+              queries. We're available 24/7 to assist you.
             </p>
           </div>
         </div>
@@ -44,117 +44,126 @@ export default function ContactPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-16 md:py-20">
         <div className="grid md:grid-cols-2 gap-12 items-start">
+          {/* Left column: Map + Head Office */}
           <div>
+            {/* Houston Map (embed) */}
             <div className="bg-white rounded-2xl shadow-md overflow-hidden mb-8">
-              <Image
-                src="/images/india_map2.jpg"
-                alt="India map — service locations"
-                width={900}
-                height={320}
-                className="w-full h-auto object-contain bg-gray-50 p-2 max-h-[320px]"
-              />
+              <div className="w-full h-[320px] bg-gray-100">
+                <iframe
+                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d221065.85137693288!2d-95.59314617431636!3d29.763281399999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640b8b4488d8501%3A0xca0d02def365053b!2sHouston%2C%20TX!5e0!3m2!1sen!2sus!4v1743700000000!5m2!1sen!2sus"
+                  width="100%"
+                  height="100%"
+                  style={{ border: 0 }}
+                  allowFullScreen
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  title="Houston Map"
+                />
+              </div>
               <div className="p-5 border-t border-gray-100">
                 <p className="text-xs text-gray-500 flex items-center gap-1">
-                  <i className="fas fa-map-pin text-red-500" /> Major branches
-                  across India
+                  <i className="fas fa-map-pin text-red-500" /> Serving the
+                  Greater Houston area
                 </p>
               </div>
             </div>
 
+            {/* Head Office Card */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <div className="flex items-center gap-3 mb-4">
                 <div className="info-icon">
                   <i className="fas fa-building" />
                 </div>
                 <h2 className="text-2xl font-bold text-gray-800">
-                  Delhi Head Office
+                  Houston Head Office
                 </h2>
               </div>
               <p className="text-gray-600 leading-relaxed">
-                Shop #2, Ground Floor, GDITL Tower, B-8, Netaji Subhash Place,
-                Pitampura, Delhi (INDIA) PIN Code - 110034
+                123 Main Street, Suite 400<br />
+                Houston, TX 77002<br />
+                United States
               </p>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center gap-3">
                   <i className="fas fa-phone-alt text-red-500 w-5" />
-                  <span className="text-gray-700">
-                    +91-11-42471031, 27357031, 9643326207, 9643326208
-                  </span>
+                  <span className="text-gray-700">+1 (323) 347-4758</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <i className="fas fa-envelope text-red-500 w-5" />
                   <a
-                    href="mailto:sales@firstflyexpress.com"
+                    href="mailto:support@firstflyexpres.com"
                     className="text-red-600 hover:underline"
                   >
-                    sales@firstflyexpress.com
+                    support@firstflyexpres.com
                   </a>
                 </div>
                 <div className="flex items-center gap-3">
                   <i className="fas fa-globe w-5 text-gray-400" />
-                  <span className="text-gray-600">www.firstflyexpress.com</span>
+                  <span className="text-gray-600">www.firstflyexpres.com</span>
                 </div>
               </div>
             </div>
           </div>
 
+          {/* Right column: Contact Form */}
           <ContactForm />
         </div>
 
+        {/* Branch Offices Section */}
         <div className="mt-20">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-extrabold text-gray-800">
-              Our Branch Offices
+              Our Houston Locations
             </h2>
             <div className="w-16 h-1 bg-red-500 mx-auto mt-3 rounded-full" />
             <p className="text-gray-500 mt-3">
-              Serving customers across Delhi NCR with dedicated support
+              Conveniently located branches across the Houston metro area
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-7">
             {[
               {
-                title: "Delhi Office - Rohini",
+                title: "Houston - Downtown",
                 address:
-                  "Fountain Chowk, A1/52, near M2K Road, Pocket 1, Sector 7, Rohini, Delhi, 110085",
-                tel: "093502 62060",
-                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.5857296049153!2d77.11877059999999!3d28.702036500000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0234789aaaab%3A0xe1f22fcd1c36340f!2sFirst%20Fly%20Express!5e0!3m2!1sen!2sin!4v1761283272177",
+                  "900 Smith Street, Suite 200, Houston, TX 77002, USA",
+                tel: "+1 (323) 347-4758",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3465.540359412435!2d-95.369001!3d29.758939!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640bf50a05e30b1%3A0x6c0f4e8c4b3c2a0f!2sDowntown%20Houston!5e0!3m2!1sen!2sus!4v1743700000001",
               },
               {
-                title: "Delhi Office - Mahipalpur",
+                title: "Houston - Hobby Airport",
                 address:
-                  "ROAD NO-6, A-BLOCK, KH NO-1033, PLOT NO-258, NEAR MUKESH TEMPO SERVICE, Mahipalpur, New Delhi 110037",
-                tel: "093509 31234",
-                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3504.598246507795!2d77.12898237533251!3d28.551793075708954!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d1c414ee02e21%3A0xc8d4786526e5f467!2sFirst%20fly%20express!5e0!3m2!1sen!2sin!4v1762152750578",
+                  "7800 Airport Blvd, Houston, TX 77061, USA",
+                tel: "+1 (323) 347-4758",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3464.828303472529!2d-95.274084!3d29.654634!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640c7b8c5f2c0a1%3A0x4a2f9c8b5d6e7f8a!2sWilliam%20P.%20Hobby%20Airport!5e0!3m2!1sen!2sus!4v1743700000002",
               },
               {
-                title: "Delhi Office - Pitampura",
+                title: "Houston - Energy Corridor",
                 address:
-                  "S. No. 2, GD-ITL Tower, Netaji Subhash Place, Pitampura, Delhi, 110034",
-                tel: "096433 26208",
-                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3499.9335134114203!2d77.1520744!3d28.691635400000003!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390d0233dc68cb5d%3A0xd1786cc7bfd3793a!2sFirst%20fly%20express!5e0!3m2!1sen!2sin!4v1761283205664",
+                  "11700 Katy Freeway, Suite 500, Houston, TX 77079, USA",
+                tel: "+1 (323) 347-4758",
+                map: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3461.173469822975!2d-95.593146!3d29.763281!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8640c5b8f2a0b0c1%3A0x7b8f2c4a5d6e7f0a!2sEnergy%20Corridor%2C%20Houston%2C%20TX!5e0!3m2!1sen!2sus!4v1743700000003",
               },
-            ].map((b) => (
-              <div key={b.title} className="branch-card p-5 flex flex-col">
+            ].map((branch) => (
+              <div key={branch.title} className="branch-card p-5 flex flex-col">
                 <div className="flex items-center gap-2 mb-3">
                   <i className="fas fa-map-marker-alt text-red-500 text-xl" />
-                  <h3 className="font-bold text-lg">{b.title}</h3>
+                  <h3 className="font-bold text-lg">{branch.title}</h3>
                 </div>
-                <p className="text-gray-600 text-sm">{b.address}</p>
+                <p className="text-gray-600 text-sm">{branch.address}</p>
                 <div className="mt-3 flex items-center gap-2 text-sm">
                   <i className="fas fa-phone-alt text-red-500" />
-                  <a href={`tel:${b.tel.replace(/\s/g, "")}`} className="hover:text-red-600">
-                    {b.tel}
+                  <a href="tel:+13233474758" className="hover:text-red-600">
+                    {branch.tel}
                   </a>
                 </div>
                 <div className="flex items-center gap-2 text-sm mb-3">
                   <i className="fas fa-envelope text-red-500" />
-                  <span className="text-gray-600">sales@firstflyexpress.com</span>
+                  <span className="text-gray-600">support@firstflyexpres.com</span>
                 </div>
                 <iframe
-                  title={b.title}
+                  title={branch.title}
                   className="rounded-xl mt-2 w-full h-44 border-0"
-                  src={b.map}
+                  src={branch.map}
                   loading="lazy"
                   allowFullScreen
                 />
@@ -163,6 +172,7 @@ export default function ContactPage() {
           </div>
         </div>
 
+        {/* 24/7 Support Section */}
         <div className="mt-16 bg-gradient-to-r from-red-50 to-orange-50 rounded-2xl p-8 text-center">
           <i className="fas fa-headset text-red-500 text-4xl mb-3" />
           <h3 className="text-2xl font-bold text-gray-800">
@@ -174,13 +184,13 @@ export default function ContactPage() {
           </p>
           <div className="flex justify-center gap-5 mt-5 flex-wrap">
             <a
-              href="tel:+919643326207"
+              href="tel:+13233474758"
               className="bg-red-600 text-white px-6 py-2.5 rounded-full font-semibold hover:bg-red-700 transition shadow"
             >
               <i className="fas fa-phone-alt mr-2" /> Call Now
             </a>
             <a
-              href="mailto:sales@firstflyexpress.com"
+              href="mailto:support@firstflyexpres.com"
               className="border border-red-400 text-red-600 px-6 py-2.5 rounded-full font-semibold hover:bg-red-50 transition"
             >
               <i className="fas fa-envelope mr-2" /> Email Support

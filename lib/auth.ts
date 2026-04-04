@@ -1,34 +1,23 @@
 import jwt from 'jsonwebtoken';
+import { NextRequest } from 'next/server';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key';
+
+export function generateToken(payload: any) {
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: '24h' });
+}
 
 export function verifyToken(token: string) {
-  if (!token) {
-    console.log('No token provided');
-    return null;
-  }
-  
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'your-secret-key'
-    );
-    console.log('Token verified successfully');
-    return decoded;
+    return jwt.verify(token, JWT_SECRET);
   } catch (error) {
-    if (error instanceof Error) {
-      console.error('Token verification failed:', error.message);
-    } else {
-      console.error('Token verification failed:', error);
-    }
     return null;
   }
 }
 
-export function generateToken(payload: any) {
-  return jwt.sign(
-    payload,
-    process.env.JWT_SECRET || 'your-secret-key',
-    {
-      expiresIn: '24h',
-    }
-  );
+// Get token from request cookies (for API routes)
+export function getTokenFromRequest(req: NextRequest) {
+  const token = req.cookies.get('auth_token')?.value;
+  if (!token) return null;
+  return verifyToken(token);
 }

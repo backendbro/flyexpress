@@ -9,27 +9,59 @@ function QuickEnquiryModalUI({
   open: boolean;
   onClose: () => void;
 }) {
-  function onSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    const form = e.currentTarget;
-    const btn = (e.nativeEvent as SubmitEvent).submitter as
-      | HTMLButtonElement
-      | null;
-    if (btn) {
-      const orig = btn.innerHTML;
-      btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
-      btn.disabled = true;
-      window.setTimeout(() => {
-        window.alert(
-          "Enquiry received. We will contact you shortly. (Demo — wire to email/API in the next phase.)",
-        );
-        onClose();
-        form.reset();
-        btn.innerHTML = orig;
-        btn.disabled = false;
-      }, 1200);
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault();
+
+  const form = e.currentTarget;
+  const btn = (e.nativeEvent as SubmitEvent)
+    .submitter as HTMLButtonElement | null;
+
+  if (!btn) return;
+
+  const originalText = btn.innerHTML;
+
+  btn.innerHTML =
+    '<i class="fas fa-spinner fa-spin"></i> Sending...';
+  btn.disabled = true;
+
+  const formData = new FormData(form);
+
+  const payload = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    phone: formData.get("phone"),
+    pickup: formData.get("pickup"),
+    delivery: formData.get("delivery"),
+    weight: formData.get("weight"),
+    content: formData.get("content"),
+    notes: formData.get("notes"),
+  };
+
+  try {
+    const response = await fetch("/api/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      alert("Enquiry sent successfully!");
+      form.reset();
+      onClose();
+    } else {
+      alert(data.error || "Failed to send enquiry");
     }
+  } catch (error) {
+    alert("Something went wrong");
+  } finally {
+    btn.innerHTML = originalText;
+    btn.disabled = false;
   }
+}
 
   if (!open) return null;
 
@@ -55,64 +87,89 @@ function QuickEnquiryModalUI({
           </button>
         </div>
         <div className="p-6">
-          <form
-            onSubmit={onSubmit}
-            className="grid grid-cols-1 md:grid-cols-2 gap-4"
-          >
-            <input
-              type="text"
-              placeholder="Pickup Location"
-              required
-              className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl focus:border-red-400 focus:ring-1 focus:ring-red-300 outline-none text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Delivery Location"
-              required
-              className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl focus:border-red-400 outline-none text-sm"
-            />
-            <input
-              type="tel"
-              placeholder="Contact Number"
-              required
-              className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Weight (Kg)"
-              required
-              className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm"
-            />
-            <input
-              type="text"
-              placeholder="Content Type"
-              required
-              className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm md:col-span-2"
-            />
-            <textarea
-              rows={2}
-              placeholder="Additional Information"
-              className="col-span-full px-4 py-3 border border-gray-200 rounded-xl outline-none text-sm"
-            />
-            <div className="col-span-full flex flex-wrap justify-center gap-4 mt-2">
-              <button
-                type="submit"
-                name="action"
-                value="email"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2"
-              >
-                <i className="fas fa-envelope" /> Send Email
-              </button>
-              <button
-                type="submit"
-                name="action"
-                value="whatsapp"
-                className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2.5 rounded-xl text-sm shadow-md transition flex items-center gap-2"
-              >
-                <i className="fab fa-whatsapp" /> Send WhatsApp
-              </button>
-            </div>
-          </form>
+        <form
+  onSubmit={onSubmit}
+  className="grid grid-cols-1 md:grid-cols-2 gap-4"
+>
+  <input
+    type="text"
+    name="name"
+    placeholder="Your Full Name"
+    required
+    className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <input
+    type="email"
+    name="email"
+    placeholder="Your Email Address"
+    required
+    className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <input
+    type="text"
+    name="pickup"
+    placeholder="Pickup Location"
+    required
+    className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <input
+    type="text"
+    name="delivery"
+    placeholder="Delivery Location"
+    required
+    className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <input
+    type="tel"
+    name="phone"
+    placeholder="Contact Number"
+    required
+    className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <input
+    type="text"
+    name="weight"
+    placeholder="Weight (Kg)"
+    required
+    className="col-span-1 px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <input
+    type="text"
+    name="content"
+    placeholder="Content Type"
+    required
+    className="col-span-full px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <textarea
+    rows={2}
+    name="notes"
+    placeholder="Additional Information"
+    className="col-span-full px-4 py-3 border border-gray-200 rounded-xl"
+  />
+
+  <div className="col-span-full flex flex-wrap justify-center gap-4 mt-2">
+    <button
+      type="submit"
+      className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2.5 rounded-xl"
+    >
+      <i className="fas fa-envelope" /> Send Email
+    </button>
+
+    <button
+      type="submit"
+      className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2.5 rounded-xl"
+    >
+      <i className="fab fa-whatsapp" /> Send WhatsApp
+    </button>
+  </div>
+</form>
         </div>
       </div>
     </div>

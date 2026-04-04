@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { verifyToken } from '@/lib/auth'
 import { createClient } from '@/lib/supabase/server'
+import { getTokenFromRequest } from '@/lib/auth';
 
-export async function GET(request: NextRequest) {
-  const authHeader = request.headers.get('authorization')
-  if (!authHeader || !verifyToken(authHeader.split(' ')[1])) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+
+export async function GET(req: NextRequest) {
+  // const authHeader = request.headers.get('authorization')
+  // if (!authHeader || !verifyToken(authHeader.split(' ')[1])) {
+  //   return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  // }
+
+  const decoded = getTokenFromRequest(req);
+  if (!decoded) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const supabase = await createClient()

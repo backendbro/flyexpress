@@ -1,28 +1,52 @@
 import { NextResponse } from 'next/server';
-import jwt from 'jsonwebtoken';
+import { createClient } from '@supabase/supabase-js';
+import bcrypt from 'bcrypt';
+import { generateToken } from '@/lib/auth';
+
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
 export async function POST(request: Request) {
   try {
     const { email, password } = await request.json();
-    
-    console.log('Login attempt:', { email });
-    
-    // Simple hardcoded check for now - this WILL work
-    if (email === 'admin@firstflyexpress.com' && password === 'admin123') {
-      const token = jwt.sign(
-        { email, role: 'admin' },
-        process.env.JWT_SECRET || 'your-secret-key',
-        { expiresIn: '24h' }
-      );
-      
-      console.log('Login successful');
-      return NextResponse.json({ success: true, token });
+
+    // 1. Fetch admin by email
+    const { data: admin, error } = await supabase
+      .from('admins')
+      .select('id, email, password_hash')
+      .eq('email', email)
+      .single();
+
+    if (error || !admin) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
-    
-    console.log('Invalid credentials');
-    return NextResponse.json({ error: 'Invalid credentials' }, { status: 401 });
-  } catch (error) {
-    console.error('Login error:', error);
+
+    // 2. Compare password with hash
+    const isValid = await bcrypt.compare(password, admin.password_hash);
+    if (!isValid) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+    }
+
+    // 3. Generate JWT
+    const token = generateToken({ id: admin.id, email: admin.email, role: 'admin' });
+
+    // 4. Set httpOnly cookie
+    const response = NextResponse.json({ success: true });
+    response.cookies.set({
+      name: 'auth_token',
+      value: token,
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24, // 24 hours
+      sameSite: 'lax',
+    });
+
+    return response;
+  } catch (err) {
+    console.error(err);
     return NextResponse.json({ error: 'Login failed' }, { status: 500 });
   }
 }
