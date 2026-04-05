@@ -11,8 +11,12 @@ export async function GET(req: NextRequest) {
   // }
 
   const decoded = getTokenFromRequest(req);
+
   if (!decoded) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
   }
 
   const supabase = await createClient()
